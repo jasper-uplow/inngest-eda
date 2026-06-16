@@ -4,13 +4,25 @@
   "files": [],
   "references": [
     {
-      "path": "./apps/web-e2e"
+      "path": "./apps/order-service"
     },
     {
       "path": "./apps/web"
     },
     {
-      "path": "./libs/shared"
+      "path": "./libs/shared/db"
+    },
+    {
+      "path": "./apps/payment-service"
+    },
+    {
+      "path": "./apps/order-service-e2e"
+    },
+    {
+      "path": "./apps/receipt-service-e2e"
+    },
+    {
+      "path": "./apps/receipt-service"
     }
   ]
 }

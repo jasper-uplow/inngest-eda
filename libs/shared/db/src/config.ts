@@ -1,17 +1,19 @@
 import { neon } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-http';
 import * as schema from './schema';
+import * as relations from './relations';
 
-type DbClient = ReturnType<typeof drizzle<typeof schema>>;
+const fullSchema = { ...schema, ...relations };
+
+type DbClient = ReturnType<typeof drizzle<typeof fullSchema>>;
 
 let dbInstance: DbClient | null = null;
 
 function getDbInstance(): DbClient {
   if (!dbInstance) {
     const sql = neon(getDatabaseUrl());
-    dbInstance = drizzle(sql, { schema });
+    dbInstance = drizzle(sql, { schema: fullSchema });
   }
-
   return dbInstance;
 }
 
