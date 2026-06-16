@@ -2,7 +2,12 @@
   "name": "@microservices/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+	"db:migrate": "pnpm --prefix libs/shared/db run db:migrate",
+	"db:generate": "pnpm --prefix libs/shared/db run db:generate",
+	"db:drop": "pnpm --prefix libs/shared/db run db:drop",
+	"db:seed": "pnpm --prefix libs/shared/db run db:seed"
+  },
   "private": true,
   "dependencies": {
     "next": "~16.1.6",

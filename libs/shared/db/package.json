@@ -4,7 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:drop": "drizzle-kit drop",
+    "db:seed": "tsx src/seeder.ts"
   },
   "keywords": [],
   "author": "",
@@ -16,6 +20,12 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "dotenv": "^16.4.5"
+    "@types/pg": "^8.20.0",
+    "@types/ws": "^8.18.1",
+    "dotenv": "^16.4.5",
+    "drizzle-kit": "^0.31.10",
+    "pg": "^8.21.0",
+    "tsx": "^4.22.4",
+    "ws": "^8.21.0"
   }
 }
