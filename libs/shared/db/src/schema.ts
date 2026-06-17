@@ -62,6 +62,33 @@ export const events = pgTable(
   ],
 );
 
+// ------ order -------
+
+export const orders = pgTable(
+  'tbl_orders',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    paymentId: uuid('payment_id').notNull().unique(),
+    sourceEventId: uuid('source_event_id').notNull(),
+    customerName: text('customer_name').notNull(),
+    productId: uuid('product_id').notNull(),
+    productName: text('product_name').notNull(),
+    quantity: integer('quantity').notNull(),
+    unitPrice: decimal('unit_price').notNull(),
+    totalAmount: decimal('total_amount').notNull(),
+    status: text('status').notNull().default('confirmed'),
+    lastError: text('last_error'),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+    completedAt: timestamp('completed_at'),
+  },
+  (table) => [
+    index('orders_payment_id_idx').on(table.paymentId),
+    index('orders_status_idx').on(table.status),
+    index('orders_customer_name_idx').on(table.customerName),
+  ],
+);
+
 // export const subscription = pgTable('tbl_subscriptions', {
 //   id: uuid('id').defaultRandom().primaryKey(),
 //   customerId: text('customer_id').notNull(),

@@ -1,3 +1,9 @@
+export {
+  events,
+  orders,
+  payments,
+  products,
+} from './schema';
 export * from './schema';
 export { db } from './config';
 // Comparison

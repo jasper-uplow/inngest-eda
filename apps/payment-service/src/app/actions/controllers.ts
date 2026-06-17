@@ -1,7 +1,7 @@
 import { db, products, eq, payments, and, gte } from 'db';
 import { Payment } from '@source/types';
 import { PaymentEvents, PurchaseCompletedEvent } from '@source/events';
-import { publishOutboxEvent, storeOutboxEvent } from './event-outbox';
+import { outbox } from '../../client';
 
 export async function getProducts() {
   return db.select().from(products);
@@ -59,12 +59,13 @@ export async function purchase(payload: Payment) {
       customerName: paymentRecord.customerName,
       productId: product.id,
       productName: product.productName,
+      productPrice: product.price,
       quantity: payload.quantity,
     },
   };
 
-  const storedEvent = await storeOutboxEvent(event, 'payment');
-  const publishResult = await publishOutboxEvent(storedEvent);
+  const storedEvent = await outbox.storeOutboxEvent(event, 'payment');
+  const publishResult = await outbox.publishOutboxEvent(storedEvent);
 
   return {
     payment: paymentRecord,

@@ -1,8 +1,8 @@
 import { createInngestClient } from '@source/inngest';
 import { createEventOutbox } from '@source/events';
 
-export const inngest = createInngestClient('payment-service');
+export const inngest = createInngestClient('order-service');
 export const outbox = createEventOutbox({
   inngest,
-  idPrefix: 'payment-event',
+  idPrefix: 'order-event',
 });

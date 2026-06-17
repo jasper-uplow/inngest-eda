@@ -19,10 +19,11 @@
     "customConditions": ["@microservices/source"],
 	"baseUrl": ".",
     "paths": {
-      "@source/utils": ["libs/shared/utils/index.ts"],
       "@source/types": ["libs/types/index.ts"],
+      "db": ["libs/shared/db/src/index.ts"],
 	  "@source/tables": ["libs/shared/db/src/index.ts"],
       "@source/events": ["libs/events/index.ts"],
+      "@source/inngest": ["libs/inngest/src/client.ts"]
     }
   }
 }

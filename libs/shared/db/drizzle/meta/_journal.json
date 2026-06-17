@@ -22,6 +22,13 @@
       "when": 1781679076658,
       "tag": "0002_young_gwen_stacy",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1781680000000,
+      "tag": "0003_add_orders_table",
+      "breakpoints": true
     }
   ]
 }
