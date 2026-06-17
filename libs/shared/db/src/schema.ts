@@ -6,6 +6,7 @@ import {
   integer,
   index,
   decimal,
+  jsonb,
 } from 'drizzle-orm/pg-core';
 
 export const payments = pgTable(
@@ -36,6 +37,28 @@ export const products = pgTable(
     index('product_name').on(table.productName),
     index('product_price').on(table.price),
     index('quantity').on(table.quantity),
+  ],
+);
+
+// ------- event -------
+export const events = pgTable(
+  'tbl_events',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    eventName: text('event_name').notNull(),
+    eventId: uuid('event_id').notNull(),
+    eventType: text('event_type').notNull(),
+    payload: jsonb('payload').notNull(),
+    status: text('status').notNull().default('pending'),
+    retryCount: integer('retry_count').notNull().default(0),
+    lastError: text('last_error'),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    processedAt: timestamp('processed_at'),
+  },
+  (table) => [
+    index('event_name_idx').on(table.eventName),
+    index('event_status_idx').on(table.status),
+    index('aggregate_id_idx').on(table.eventId),
   ],
 );
 

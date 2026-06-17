@@ -1,7 +1,7 @@
 import { db, products, eq, payments, and, gte } from 'db';
 import { Payment } from '@source/types';
 import { PaymentEvents, PurchaseCompletedEvent } from '@source/events';
-import { inngest } from '../../client';
+import { publishOutboxEvent, storeOutboxEvent } from './event-outbox';
 
 export async function getProducts() {
   return db.select().from(products);
@@ -63,11 +63,17 @@ export async function purchase(payload: Payment) {
     },
   };
 
-  await inngest.send({
-    id: `payment-event-${event.eventId}`,
-    name: event.eventType,
-    data: event,
-  });
+  const storedEvent = await storeOutboxEvent(event, 'payment');
+  const publishResult = await publishOutboxEvent(storedEvent);
 
-  return { payment: paymentRecord, product: updatedProduct };
+  return {
+    payment: paymentRecord,
+    product: updatedProduct,
+    event: {
+      id: storedEvent.id,
+      status: publishResult.record.status,
+      published: publishResult.ok,
+      ...(publishResult.ok ? {} : { publishError: publishResult.error }),
+    },
+  };
 }
