@@ -20,8 +20,8 @@
 	"baseUrl": ".",
     "paths": {
       "@source/utils": ["libs/shared/utils/index.ts"],
-      "@source/types": ["libs/shared/types/index.ts"],
-      "@source/tables": ["libs/shared/db/src/index.ts"],
+      "@source/types": ["libs/types/index.ts"],
+	  "@source/tables": ["libs/shared/db/src/index.ts"],
       "@source/events": ["libs/events/index.ts"],
     }
   }

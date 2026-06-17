@@ -2,11 +2,9 @@ import {
   pgTable,
   uuid,
   text,
-  boolean,
   timestamp,
   integer,
   index,
-  uniqueIndex,
   decimal,
 } from 'drizzle-orm/pg-core';
 
@@ -15,10 +13,12 @@ export const payments = pgTable(
   {
     id: uuid('id').defaultRandom().primaryKey(),
     customerName: text('customer_name').notNull(),
-    productId: uuid('product_id').references(() => products.id, {
-      onDelete: 'cascade',
-    }),
-    purchasedAt: timestamp(),
+    productId: uuid('product_id')
+      .notNull()
+      .references(() => products.id, {
+        onDelete: 'restrict',
+      }),
+    purchasedAt: timestamp('purchasedAt'),
   },
   (table) => [index('product_id').on(table.productId)],
 );
@@ -30,7 +30,7 @@ export const products = pgTable(
     productName: text('product_name').notNull(),
     price: decimal('product_price').notNull(),
     quantity: integer('quantity').notNull(),
-    createdAt: timestamp(),
+    createdAt: timestamp('createdAt'),
   },
   (table) => [
     index('product_name').on(table.productName),

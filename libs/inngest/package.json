@@ -1,0 +1,16 @@
+{
+	"name": "@source/inngest",
+	"version": "1.0.0",
+	"private": true,
+	"main": "./src/client.ts",
+	"types": "./src/client.ts",
+	"exports": {
+	  ".": {
+		"types": "./src/client.ts",
+		"default": "./src/client.ts"
+	  }
+	},
+	"dependencies": {
+	  "inngest": "^4.5.1"
+	}
+  }

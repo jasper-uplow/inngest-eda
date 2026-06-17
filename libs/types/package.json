@@ -1,0 +1,14 @@
+{
+	"name": "@source/types",
+	"version": "1.0.0",
+	"private": true,
+	"exports": {
+	  ".": {
+		"types": "./index.ts",
+		"default": "./index.ts"
+	  }
+	},
+	"dependencies": {
+	  "zod": "^4.4.3"
+	}
+}

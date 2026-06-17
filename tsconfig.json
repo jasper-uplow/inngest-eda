@@ -13,16 +13,10 @@
       "path": "./libs/shared/db"
     },
     {
-      "path": "./apps/payment-service"
-    },
-    {
-      "path": "./apps/order-service-e2e"
-    },
-    {
-      "path": "./apps/receipt-service-e2e"
-    },
-    {
       "path": "./apps/receipt-service"
+    },
+    {
+      "path": "./libs/inngest"
     }
   ]
 }

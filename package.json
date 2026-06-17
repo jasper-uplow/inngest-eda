@@ -3,16 +3,18 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-	"db:migrate": "pnpm --prefix libs/shared/db run db:migrate",
-	"db:generate": "pnpm --prefix libs/shared/db run db:generate",
-	"db:drop": "pnpm --prefix libs/shared/db run db:drop",
-	"db:seed": "pnpm --prefix libs/shared/db run db:seed"
+    "db:migrate": "pnpm --prefix libs/shared/db run db:migrate",
+    "db:generate": "pnpm --prefix libs/shared/db run db:generate",
+    "db:drop": "pnpm --prefix libs/shared/db run db:drop",
+    "db:seed": "pnpm --prefix libs/shared/db run db:seed"
   },
   "private": true,
   "dependencies": {
+    "inngest": "^4.5.1",
     "next": "~16.1.6",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.8.0",
