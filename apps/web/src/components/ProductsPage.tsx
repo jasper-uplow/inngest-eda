@@ -6,6 +6,7 @@ import type { Product } from '@/types/product';
 import { ActionButtons } from '@/components/ActionButtons';
 import { ProductsTable } from '@/components/ProductsTable';
 import { PurchaseModal } from '@/components/PurchaseModal';
+import { ReceiptModal } from '@/components/ReceiptModal';
 
 type ProductsPageProps = {
   products: Product[];
@@ -14,6 +15,7 @@ type ProductsPageProps = {
 
 export function ProductsPage({ products, error }: ProductsPageProps) {
   const [isPurchaseOpen, setIsPurchaseOpen] = useState(false);
+  const [receiptPaymentId, setReceiptPaymentId] = useState<string | null>(null);
   const router = useRouter();
 
   return (
@@ -54,7 +56,15 @@ export function ProductsPage({ products, error }: ProductsPageProps) {
         open={isPurchaseOpen}
         products={products}
         onClose={() => setIsPurchaseOpen(false)}
-        onSuccess={() => router.refresh()}
+        onSuccess={(paymentId) => {
+          router.refresh();
+          setReceiptPaymentId(paymentId);
+        }}
+      />
+
+      <ReceiptModal
+        paymentId={receiptPaymentId}
+        onClose={() => setReceiptPaymentId(null)}
       />
     </main>
   );

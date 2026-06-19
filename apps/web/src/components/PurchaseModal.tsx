@@ -8,7 +8,7 @@ type PurchaseModalProps = {
   open: boolean;
   products: Product[];
   onClose: () => void;
-  onSuccess?: () => void;
+  onSuccess?: (paymentId: string) => void;
 };
 
 function formatPrice(price: string) {
@@ -87,16 +87,21 @@ export function PurchaseModal({
         }),
       });
 
-      const data = await response.json().catch(() => null);
+      const data = (await response.json().catch(() => null)) as
+        | { error?: string; payment?: { id?: string } }
+        | null;
 
       if (!response.ok) {
-        throw new Error(
-          (data as { error?: string } | null)?.error ?? 'Purchase failed',
-        );
+        throw new Error(data?.error ?? 'Purchase failed');
+      }
+
+      const paymentId = data?.payment?.id;
+      if (!paymentId) {
+        throw new Error('Purchase succeeded but no payment id was returned');
       }
 
       showToast('Purchase completed successfully.', 'success');
-      onSuccess?.();
+      onSuccess?.(paymentId);
       onClose();
     } catch (error) {
       showToast(
