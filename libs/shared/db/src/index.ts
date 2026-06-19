@@ -4,6 +4,7 @@ export {
   orders,
   payments,
   products,
+  receipts,
 } from './schema';
 export * from './schema';
 export { db } from './config';

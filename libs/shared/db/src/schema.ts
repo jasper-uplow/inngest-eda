@@ -106,6 +106,30 @@ export const orders = pgTable(
   ],
 );
 
+// ------ receipt -------
+
+export const receipts = pgTable(
+  'tbl_receipts',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    receiptNumber: text('receipt_number').notNull().unique(),
+    orderId: uuid('order_id').notNull(),
+    paymentId: uuid('payment_id').notNull().unique(),
+    sourceEventId: uuid('source_event_id').notNull(),
+    customerName: text('customer_name').notNull(),
+    productName: text('product_name').notNull(),
+    quantity: integer('quantity').notNull(),
+    unitPrice: decimal('unit_price').notNull(),
+    totalAmount: decimal('total_amount').notNull(),
+    issuedAt: timestamp('issued_at').defaultNow().notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+  },
+  (table) => [
+    index('receipts_payment_id_idx').on(table.paymentId),
+    index('receipts_order_id_idx').on(table.orderId),
+  ],
+);
+
 // export const subscription = pgTable('tbl_subscriptions', {
 //   id: uuid('id').defaultRandom().primaryKey(),
 //   customerId: text('customer_id').notNull(),

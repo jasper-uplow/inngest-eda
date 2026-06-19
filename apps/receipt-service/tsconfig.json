@@ -17,7 +17,11 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "db": ["../../libs/shared/db/src/index.ts"],
+      "@source/types": ["../../libs/types/index.ts"],
+      "@source/events": ["../../libs/events/index.ts"],
+      "@source/inngest": ["../../libs/inngest/src/client.ts"]
     },
     "outDir": "dist",
     "rootDir": "src",
@@ -44,5 +48,13 @@
     "eslint.config.js",
     "eslint.config.cjs",
     "eslint.config.mjs"
+  ],
+  "references": [
+    {
+      "path": "../../libs/inngest"
+    },
+    {
+      "path": "../../libs/shared/db"
+    }
   ]
 }

@@ -36,6 +36,13 @@
       "when": 1781767368600,
       "tag": "0004_flashy_gambit",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1781852166788,
+      "tag": "0005_talented_chronomancer",
+      "breakpoints": true
     }
   ]
 }
