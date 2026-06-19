@@ -1,5 +1,6 @@
 export {
   events,
+  eventConsumptions,
   orders,
   payments,
   products,

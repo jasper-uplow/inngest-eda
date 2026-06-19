@@ -5,6 +5,7 @@ import {
   timestamp,
   integer,
   index,
+  uniqueIndex,
   decimal,
   jsonb,
 } from 'drizzle-orm/pg-core';
@@ -51,14 +52,30 @@ export const events = pgTable(
     payload: jsonb('payload').notNull(),
     status: text('status').notNull().default('pending'),
     retryCount: integer('retry_count').notNull().default(0),
+    redeliveryCount: integer('redelivery_count').notNull().default(0),
     lastError: text('last_error'),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     processedAt: timestamp('processed_at'),
+    lastReconciledAt: timestamp('last_reconciled_at'),
   },
   (table) => [
     index('event_name_idx').on(table.eventName),
     index('event_status_idx').on(table.status),
     index('aggregate_id_idx').on(table.eventId),
+  ],
+);
+
+export const eventConsumptions = pgTable(
+  'tbl_event_consumptions',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    eventId: uuid('event_id').notNull(),
+    consumer: text('consumer').notNull(),
+    processedAt: timestamp('processed_at').defaultNow().notNull(),
+  },
+  (table) => [
+    uniqueIndex('event_consumer_unique').on(table.eventId, table.consumer),
+    index('event_consumptions_event_id_idx').on(table.eventId),
   ],
 );
 

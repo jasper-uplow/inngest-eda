@@ -1,10 +1,13 @@
 import { db, orders, eq } from 'db';
 import {
   OrderEvents,
+  recordConsumption,
   type OrderCreatedEvent,
   type PurchaseCompletedEvent,
 } from '@source/events';
 import { outbox } from '../../client';
+
+const CONSUMER_NAME = 'order-service';
 
 function calculateTotalAmount(unitPrice: string, quantity: number) {
   return (Number(unitPrice) * quantity).toFixed(2);
@@ -22,10 +25,11 @@ export async function createOrderFromPaymentEvent(
     .limit(1);
 
   if (existingOrder) {
+    await recordConsumption(purchaseEvent.eventId, CONSUMER_NAME);
     return { order: existingOrder };
   }
 
-  const [order] = await db
+  const [insertedOrder] = await db
     .insert(orders)
     .values({
       paymentId: data.paymentId,
@@ -39,10 +43,22 @@ export async function createOrderFromPaymentEvent(
       status: 'confirmed',
       updatedAt: new Date(),
     })
+    .onConflictDoNothing({ target: orders.paymentId })
     .returning();
 
+  let order = insertedOrder;
   if (!order) {
-    throw new Error('Failed to create order');
+    const [raced] = await db
+      .select()
+      .from(orders)
+      .where(eq(orders.paymentId, data.paymentId))
+      .limit(1);
+    if (!raced) {
+      throw new Error('Failed to create order');
+    }
+    order = raced;
+    await recordConsumption(purchaseEvent.eventId, CONSUMER_NAME);
+    return { order };
   }
 
   const event: OrderCreatedEvent = {
@@ -64,6 +80,8 @@ export async function createOrderFromPaymentEvent(
 
   const storedEvent = await outbox.storeOutboxEvent(event, 'order');
   const publishResult = await outbox.publishOutboxEvent(storedEvent);
+
+  await recordConsumption(purchaseEvent.eventId, CONSUMER_NAME);
 
   return {
     order,
