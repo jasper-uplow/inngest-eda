@@ -1,13 +1,29 @@
 import { db, events, eq } from 'db';
-import type { PurchaseCompletedEvent } from '@source/events';
-import { inngest } from '../../client';
+import type { Inngest } from 'inngest';
+import type { EventEnvelope } from '@source/types';
 
 export type StoredEvent = typeof events.$inferSelect;
 
 const MAX_PUBLISH_RETRIES = 5;
 
-export async function storeOutboxEvent(
-  event: PurchaseCompletedEvent,
+export type EventOutboxOptions = {
+  inngest: Inngest;
+  idPrefix?: string;
+};
+
+function buildInngestEventId(
+  event: EventEnvelope<unknown>,
+  idPrefix?: string,
+): string {
+  if (idPrefix) {
+    return `${idPrefix}-${event.eventId}`;
+  }
+
+  return `${event.eventType}-${event.eventId}`;
+}
+
+export async function storeOutboxEvent<T>(
+  event: EventEnvelope<T>,
   aggregateType: string,
 ) {
   const [record] = await db
@@ -28,12 +44,15 @@ export async function storeOutboxEvent(
   return record;
 }
 
-export async function publishOutboxEvent(record: StoredEvent) {
-  const payload = record.payload as PurchaseCompletedEvent;
+export async function publishOutboxEvent(
+  record: StoredEvent,
+  options: EventOutboxOptions,
+) {
+  const payload = record.payload as EventEnvelope<unknown>;
 
   try {
-    await inngest.send({
-      id: `payment-event-${payload.eventId}`,
+    await options.inngest.send({
+      id: buildInngestEventId(payload, options.idPrefix),
       name: payload.eventType,
       data: payload,
     });
@@ -56,7 +75,8 @@ export async function publishOutboxEvent(record: StoredEvent) {
     const [updated] = await db
       .update(events)
       .set({
-        status: record.retryCount + 1 >= MAX_PUBLISH_RETRIES ? 'failed' : 'pending',
+        status:
+          record.retryCount + 1 >= MAX_PUBLISH_RETRIES ? 'failed' : 'pending',
         retryCount: record.retryCount + 1,
         lastError: message,
       })
@@ -71,7 +91,10 @@ export async function publishOutboxEvent(record: StoredEvent) {
   }
 }
 
-export async function retryPendingEvents(limit = 10) {
+export async function retryPendingEvents(
+  options: EventOutboxOptions,
+  limit = 10,
+) {
   const pending = await db
     .select()
     .from(events)
@@ -83,9 +106,20 @@ export async function retryPendingEvents(limit = 10) {
   for (const record of pending) {
     results.push({
       eventId: record.eventId,
-      ...(await publishOutboxEvent(record)),
+      ...(await publishOutboxEvent(record, options)),
     });
   }
 
   return results;
+}
+
+export function createEventOutbox(options: EventOutboxOptions) {
+  return {
+    storeOutboxEvent: <T>(event: EventEnvelope<T>, aggregateType: string) =>
+      storeOutboxEvent(event, aggregateType),
+    publishOutboxEvent: (record: StoredEvent) =>
+      publishOutboxEvent(record, options),
+    retryPendingEvents: (limit?: number) =>
+      retryPendingEvents(options, limit),
+  };
 }

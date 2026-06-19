@@ -1,6 +1,6 @@
 export const metadata = {
-  title: 'order-service',
-  description: 'Order microservice API',
+  title: 'reconciler-service',
+  description: 'Outbox reconciler microservice',
 };
 
 export default function RootLayout({

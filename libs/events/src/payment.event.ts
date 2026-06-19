@@ -10,6 +10,7 @@ export type PaymentPurchaseCompleted = {
   customerName: string;
   productId: string;
   productName: string;
+  productPrice: string;
   quantity: number;
 };
 

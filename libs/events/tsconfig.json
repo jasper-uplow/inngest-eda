@@ -1,13 +1,18 @@
 {
-	"extends": "../../tsconfig.base.json",
-	"compilerOptions": {
-	  "composite": false,
-	  "declaration": false,
-	  "declarationMap": false,
-	  "emitDeclarationOnly": false,
-	  "noEmit": true,
-	  "types": ["node"]
-	},
-	"include": ["index.ts", "src/**/*.ts"],
-	"exclude": ["node_modules"]
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": false,
+    "declaration": false,
+    "declarationMap": false,
+    "emitDeclarationOnly": false,
+    "noEmit": true,
+    "types": ["node"]
+  },
+  "include": ["index.ts", "src/**/*.ts"],
+  "exclude": ["node_modules"],
+  "references": [
+    {
+      "path": "../shared/db"
+    }
+  ]
 }

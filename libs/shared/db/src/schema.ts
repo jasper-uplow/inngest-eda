@@ -5,6 +5,7 @@ import {
   timestamp,
   integer,
   index,
+  uniqueIndex,
   decimal,
   jsonb,
 } from 'drizzle-orm/pg-core';
@@ -51,14 +52,57 @@ export const events = pgTable(
     payload: jsonb('payload').notNull(),
     status: text('status').notNull().default('pending'),
     retryCount: integer('retry_count').notNull().default(0),
+    redeliveryCount: integer('redelivery_count').notNull().default(0),
     lastError: text('last_error'),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     processedAt: timestamp('processed_at'),
+    lastReconciledAt: timestamp('last_reconciled_at'),
   },
   (table) => [
     index('event_name_idx').on(table.eventName),
     index('event_status_idx').on(table.status),
     index('aggregate_id_idx').on(table.eventId),
+  ],
+);
+
+export const eventConsumptions = pgTable(
+  'tbl_event_consumptions',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    eventId: uuid('event_id').notNull(),
+    consumer: text('consumer').notNull(),
+    processedAt: timestamp('processed_at').defaultNow().notNull(),
+  },
+  (table) => [
+    uniqueIndex('event_consumer_unique').on(table.eventId, table.consumer),
+    index('event_consumptions_event_id_idx').on(table.eventId),
+  ],
+);
+
+// ------ order -------
+
+export const orders = pgTable(
+  'tbl_orders',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    paymentId: uuid('payment_id').notNull().unique(),
+    sourceEventId: uuid('source_event_id').notNull(),
+    customerName: text('customer_name').notNull(),
+    productId: uuid('product_id').notNull(),
+    productName: text('product_name').notNull(),
+    quantity: integer('quantity').notNull(),
+    unitPrice: decimal('unit_price').notNull(),
+    totalAmount: decimal('total_amount').notNull(),
+    status: text('status').notNull().default('confirmed'),
+    lastError: text('last_error'),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+    completedAt: timestamp('completed_at'),
+  },
+  (table) => [
+    index('orders_payment_id_idx').on(table.paymentId),
+    index('orders_status_idx').on(table.status),
+    index('orders_customer_name_idx').on(table.customerName),
   ],
 );
 

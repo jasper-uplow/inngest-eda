@@ -5,7 +5,9 @@
   "main": "./index.ts",
   "types": "./index.ts",
   "dependencies": {
-    "@source/types": "workspace:*"
+    "@source/types": "workspace:*",
+    "db": "workspace:*",
+    "inngest": "^4.5.1"
   },
   "exports": {
     ".": {
